@@ -69,15 +69,19 @@ export const logout = async () => {
     return false
 }
 
-export const getProducts = async () => {
+export const getProducts = async (title = null) => {
     const client = getClient();
+    const params = {
+        with_suppliers: true
+    }
+    if (title) {
+        params.title = title
+    }
     try {
         const {data, status} = await client.get(
           '/products',
           {
-              params: {
-                  with_suppliers: true
-              }
+              params: params
           }
         )
         if (status === 200) {
@@ -138,6 +142,22 @@ export const getSuppliers = async () => {
     return []
 }
 
+export const getFullOrder = async (orderId) => {
+    const client = getClient();
+    try {
+        const response = await client.get(
+          `/orders/${orderId}`,
+        )
+        if (response.status === 200) {
+            return response.data
+        }
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+    return null
+}
+
 export const createOrder = async (supplierId) => {
     const client = getClient();
     try {
@@ -146,6 +166,40 @@ export const createOrder = async (supplierId) => {
           {
               supplier_id: supplierId,
           }
+        )
+        if (response.status === 200) {
+            return await getFullOrder(response.data.id)
+        }
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+    return null
+}
+
+export const addProducts = async (orderId, productAmountsList) => {
+    const client = getClient();
+    try {
+        const response = await client.post(
+          `/orders/${orderId}/products`,
+          productAmountsList
+        )
+        if (response.status === 200) {
+            console.log(response.data)
+            return response.data
+        }
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+    return null
+}
+export const deleteProducts = async (orderId, productIdsList) => {
+    const client = getClient();
+    try {
+        const response = await client.delete(
+          `/orders/${orderId}/products/`,
+          productIdsList
         )
         if (response.status === 200) {
             console.log(response.data)
