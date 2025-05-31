@@ -1,0 +1,20 @@
+.order-card {
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.details-toggle {
+  background: none;
+  border: none;
+  color: #8B0000;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.order-details {
+  margin-top: 10px;
+  font-style: italic;
+}

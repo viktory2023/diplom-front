@@ -1,0 +1,43 @@
+.order-form-page {
+  font-family: Arial, sans-serif;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.order-form {
+  background: #f9f9f9;
+  padding: 30px 40px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 400px;
+}
+
+.order-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.order-form input,
+.order-form select {
+  margin-top: 8px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.submit-button {
+  background-color: #8B0000;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+}
