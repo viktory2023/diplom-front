@@ -50,3 +50,8 @@ body {
 .login-button:hover {
   background-color: #cc0000;
 }
+.login-error {
+  color: #cc0000;
+  margin-top: 10px;
+  font-size: 14px;
+}
