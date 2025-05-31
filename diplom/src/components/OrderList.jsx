@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import OrderCard from "./OrderCard";
 import "../styles/OrderCard.css";
+import {checkLogin, getOrders} from "../utils/client";
 
 const ordersFromDB = [
   {
@@ -19,10 +20,11 @@ const ordersFromDB = [
   },
 ];
 
-export default function OrderList() {
+export default function OrderList({orders}) {
+  console.log(orders);
   return (
     <div className="orders-section" id="orders">
-      {ordersFromDB.map((order) => (
+      {orders.map((order) => (
         <OrderCard key={order.id} order={order} />
       ))}
     </div>

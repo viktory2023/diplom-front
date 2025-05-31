@@ -1,32 +1,37 @@
 import React, { useState } from 'react';
 import '../styles/AuthPage.css';
+import { loginUser } from '../utils/client';
+import {Navigate} from "react-router-dom";
 
 export default function AuthPage() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const handleLogin = () => {
-    const correctUsername = 'admin';
-    const correctPassword = '1234';
-
-    if (username === correctUsername && password === correctPassword) {
-      setErrorMessage('');
-      alert('Успешный вход!');
-    } else {
-      setErrorMessage('Неверное имя пользователя или пароль');
-    }
+    loginUser({email, password})
+        .then(res => {
+            if (res) {
+                alert('Login successful');
+                setLoginSuccess(true);
+            } else {
+                setErrorMessage('Login failed');
+            }
+        })
+    // console.log('Логин:', username);
+    // console.log('Пароль:', password);
   };
-
   return (
     <div className="login-container">
+      {loginSuccess && <Navigate replace to='/' />}
       <div className="login-box">
         <h2 className="login-title">Вход в систему</h2>
         <input
           type="text"
-          placeholder="Имя пользователя"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Электронная почта"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="login-input"
         />
         <input
