@@ -1,5 +1,4 @@
 import axios from "axios";
-import {createCookie} from "react-router-dom";
 
 const config = {
     baseURL: 'http://10.8.1.4:8000',
@@ -121,4 +120,40 @@ export const getOrderDetails = async (orderId) => {
         return []
     }
     return []
+}
+
+export const getSuppliers = async () => {
+    const client = getClient();
+    try {
+        const {status, data} = await client.get(
+          '/suppliers',
+        )
+        if (status === 200) {
+            return data
+        }
+    } catch (error) {
+        console.log(error)
+        return []
+    }
+    return []
+}
+
+export const createOrder = async (supplierId) => {
+    const client = getClient();
+    try {
+        const response = await client.post(
+          '/orders',
+          {
+              supplier_id: supplierId,
+          }
+        )
+        if (response.status === 200) {
+            console.log(response.data)
+            return response.data
+        }
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+    return null
 }

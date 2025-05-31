@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RedHeader from "../components/RedHeader";
 import "../styles/MakeOrderPage.css";
-import { checkLogin } from "../utils/client";
+import {checkLogin, createOrder, getSuppliers} from "../utils/client";
 import { Navigate } from "react-router-dom";
 
 const COMPONENTS_LIST = [
@@ -18,16 +18,24 @@ const COMPONENTS_LIST = [
 ];
 
 export default function MakeOrderPage() {
-  const [supplier, setSupplier] = useState("");
+  const [supplier, setSupplier] = useState();
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [componentQuantities, setComponentQuantities] = useState({});
   const [step, setStep] = useState(1);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [suppliers, setSuppliers] = useState([]);
+  const [order, setOrder] = useState(null);
 
   useEffect(() => {
     checkLogin().then(res => setIsLoggedIn(res));
+    getSuppliers().then(res => setSuppliers(res));
   }, []);
+
+  const handleOrderCreate = () => {
+    createOrder(supplier).then(res => setOrder(res))
+    setStep(2)
+  }
 
   const handleComponentSelect = (e) => {
     const value = e.target.value;
@@ -72,11 +80,14 @@ export default function MakeOrderPage() {
               Выберите поставщика:
               <select value={supplier} onChange={(e) => setSupplier(e.target.value)}>
                 <option value="">Выбрать</option>
-                <option value="ООО ИнструментКомплект">ООО ИнструментКомплект</option>
-                <option value="ЗАО СнабСервис">ЗАО СнабСервис</option>
+                { suppliers.map(supplier => (
+                  <option key={supplier.id} value={supplier.id}>{supplier.title}</option>
+                ))}
+                {/*<option value="ООО ИнструментКомплект">ООО ИнструментКомплект</option>*/}
+                {/*<option value="ЗАО СнабСервис">ЗАО СнабСервис</option>*/}
               </select>
             </label>
-            <button disabled={!supplier} onClick={() => setStep(2)} className="submit-button">
+            <button disabled={!supplier} onClick={handleOrderCreate} className="submit-button">
               Сделать заказ
             </button>
           </div>
