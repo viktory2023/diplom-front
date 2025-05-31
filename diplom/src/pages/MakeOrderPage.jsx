@@ -19,30 +19,22 @@ const COMPONENTS_LIST = [
 
 export default function MakeOrderPage() {
   const [supplier, setSupplier] = useState();
-  const [selectedComponents, setSelectedComponents] = useState([]);
   const [componentQuantities, setComponentQuantities] = useState({});
-  const [step, setStep] = useState(1);
+  const [selectedComponents, setSelectedComponents] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [suppliers, setSuppliers] = useState([]);
-  const [order, setOrder] = useState(null);
 
   useEffect(() => {
     checkLogin().then(res => setIsLoggedIn(res));
     getSuppliers().then(res => setSuppliers(res));
   }, []);
 
-  const handleOrderCreate = () => {
-    createOrder(supplier).then(res => setOrder(res))
-    setStep(2)
-  }
-
-  const handleComponentSelect = (e) => {
-    const value = e.target.value;
+  const handleComponentToggle = (component) => {
     setSelectedComponents(prev =>
-      prev.includes(value)
-        ? prev.filter(item => item !== value)
-        : [...prev, value]
+      prev.includes(component)
+        ? prev.filter(item => item !== component)
+        : [...prev, component]
     );
   };
 
@@ -54,15 +46,16 @@ export default function MakeOrderPage() {
   };
 
   const handleCreateOrder = () => {
+    const selected = selectedComponents
+      .filter(comp => componentQuantities[comp] > 0)
+      .map(comp => ({ name: comp, quantity: componentQuantities[comp] }));
+
     const order = {
       supplier,
-      components: selectedComponents.map(comp => ({
-        name: comp,
-        quantity: componentQuantities[comp] || 0
-      }))
+      components: selected
     };
+
     console.log("Создан заказ:", order);
-    // Тут можно отправить заказ на сервер
   };
 
   const filteredComponents = COMPONENTS_LIST.filter(component =>
@@ -74,28 +67,21 @@ export default function MakeOrderPage() {
       {!isLoggedIn && <Navigate replace to="/login" />}
       <RedHeader />
       <div className="form-container">
-        {step === 1 && (
-          <div className="step-block">
-            <label>
-              Выберите поставщика:
-              <select value={supplier} onChange={(e) => setSupplier(e.target.value)}>
-                <option value="">Выбрать</option>
-                { suppliers.map(supplier => (
-                  <option key={supplier.id} value={supplier.id}>{supplier.title}</option>
-                ))}
-                {/*<option value="ООО ИнструментКомплект">ООО ИнструментКомплект</option>*/}
-                {/*<option value="ЗАО СнабСервис">ЗАО СнабСервис</option>*/}
-              </select>
-            </label>
-            <button disabled={!supplier} onClick={handleOrderCreate} className="submit-button">
-              Сделать заказ
-            </button>
-          </div>
-        )}
+        <div className="step-block">
+          <label>
+            Выберите поставщика:
+            <select value={supplier} onChange={(e) => setSupplier(e.target.value)}>
+              <option value="">Выбрать</option>
+              {suppliers.map(supplier => (
+                <option key={supplier.id} value={supplier.id}>{supplier.title}</option>
+              ))}
+            </select>
+          </label>
+        </div>
 
-        {step === 2 && (
+        {supplier && (
           <div className="step-block">
-            <p>Выберите комплектующие:</p>
+            <p>Выберите комплектующие и укажите количество:</p>
             <input
               type="text"
               placeholder="Поиск комплектующего..."
@@ -104,43 +90,30 @@ export default function MakeOrderPage() {
               className="search-input"
             />
             {filteredComponents.map((component) => (
-              <label key={component}>
-                <input
-                  type="checkbox"
-                  value={component}
-                  checked={selectedComponents.includes(component)}
-                  onChange={handleComponentSelect}
-                />
-                {component}
-              </label>
-            ))}
-            <button
-              disabled={selectedComponents.length === 0}
-              onClick={() => setStep(3)}
-              className="submit-button"
-            >
-              Указать количество
-            </button>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div className="step-block">
-            <p>Укажите количество для каждого выбранного комплектующего:</p>
-            {selectedComponents.map((component) => (
-              <div key={component}>
+              <div key={component} className="component-row">
                 <label>
-                  {component}:
                   <input
-                    type="number"
-                    min="1"
-                    value={componentQuantities[component] || ""}
-                    onChange={(e) => handleQuantityChange(component, e.target.value)}
+                    type="checkbox"
+                    checked={selectedComponents.includes(component)}
+                    onChange={() => handleComponentToggle(component)}
                   />
+                  {component}
                 </label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                  value={componentQuantities[component] || ""}
+                  onChange={(e) => handleQuantityChange(component, e.target.value)}
+                  disabled={!selectedComponents.includes(component)}
+                />
               </div>
             ))}
-            <button onClick={handleCreateOrder} className="submit-button">
+            <button
+              onClick={handleCreateOrder}
+              className="submit-button"
+              disabled={selectedComponents.length === 0 || selectedComponents.every(c => !componentQuantities[c] || componentQuantities[c] <= 0)}
+            >
               Создать заказ
             </button>
           </div>
