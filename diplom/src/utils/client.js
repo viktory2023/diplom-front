@@ -2,7 +2,7 @@ import axios from "axios";
 import {createCookie} from "react-router-dom";
 
 const config = {
-    baseURL: 'http://localhost:8000',
+    baseURL: 'http://10.8.1.4:8000',
 }
 
 const getClient = () => {
