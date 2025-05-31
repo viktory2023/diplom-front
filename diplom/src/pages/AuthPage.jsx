@@ -29,7 +29,6 @@ export default function AuthPage() {
           className="login-input"
         />
         <button onClick={handleLogin} className="login-button">Войти</button>
-        <p className="forgot-password">Забыли пароль?</p>
       </div>
     </div>
   );
