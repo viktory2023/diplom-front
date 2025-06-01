@@ -7,7 +7,6 @@ export default function RedHeader() {
     <div className="red-header">
       <Link to="/" className="red-nav-link">На главную</Link>
       <Link to="/order" className="red-nav-link">Сделать заказ</Link>
-      <Link to="/order/single" className="red-nav-link">Ваш заказ</Link>
       <Link to="/info" className="red-nav-link">Информация</Link>
     </div>
   );
