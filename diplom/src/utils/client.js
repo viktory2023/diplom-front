@@ -121,9 +121,9 @@ export const getOrderDetails = async (orderId) => {
         }
     } catch (error) {
         console.log(error)
-        return []
+        return null
     }
-    return []
+    return null
 }
 
 export const getSuppliers = async () => {
@@ -199,11 +199,31 @@ export const deleteProducts = async (orderId, productIdsList) => {
     try {
         const response = await client.delete(
           `/orders/${orderId}/products/`,
-          productIdsList
+          {
+              data: productIdsList
+          }
         )
         if (response.status === 200) {
             console.log(response.data)
             return response.data
+        }
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+    return null
+}
+
+export const updateOrderStatus = async (orderId, status, cancel_message = null) => {
+    const client = getClient();
+    const data = cancel_message ? {comment: cancel_message} : null
+    try {
+        const response = await client.put(
+          `/orders/${orderId}/status/set_${status}`,
+          data
+        )
+        if (response.status === 200) {
+            return await getFullOrder(response.data.id)
         }
     } catch (error) {
         console.log(error)

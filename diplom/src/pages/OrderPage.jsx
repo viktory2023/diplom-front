@@ -16,7 +16,6 @@ export default function OrderPage() {
     getOrders()
       .then(res => {
         setOrders(res)
-        // console.log(res)
       })
   }, [])
   return (

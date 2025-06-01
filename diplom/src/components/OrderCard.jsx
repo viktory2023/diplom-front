@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "../styles/OrderCard.css";
 import {getOrderDetails} from "../utils/client";
 
@@ -6,25 +6,32 @@ export default function OrderCard({ order }) {
   const [expanded, setExpanded] = useState(false);
   const [products, setProducts] = useState([]);
 
+  useEffect(() => {
+    console.log('OrderCard render');
+    getOrderDetails(order.id)
+      .then(res => {
+        console.log(res)
+        order = res
+        setProducts(res.products)
+        // setOrder(res)
+        // setProducts(res.products);
+      })
+  }, [order])
+
   const handleDetails = () => {
-    if (!expanded) {
-      getOrderDetails(order.id)
-        .then(res => {
-          setProducts(res.products);
-        })
-    }
     setExpanded(!expanded)
   }
 
   return (
+
     <div className="order-card">
-      <h3>Заказ № {order.number}</h3>
-      <p><strong>Статус:</strong> {order.status}</p>
-      { order.cancel_comment &&
+      <a href={`/order/${order?.id}`}><h3>Заказ № {order?.number}</h3></a>
+      <p><strong>Статус:</strong> {order?.status}</p>
+      { order?.cancel_comment &&
         <p><strong>Комментарий к отмене:</strong> {order.cancel_comment}</p>}
-      <p><strong>Поставщик:</strong> {order.supplier.title} ОГРН: {order.supplier.ogrn}</p>
+      <p><strong>Поставщик:</strong> {order?.supplier.title} ОГРН: {order?.supplier.ogrn}</p>
       <button className="details-toggle" onClick={() => handleDetails()}>
-        Дополнительная информация
+        Состав заказа
       </button>
       {/*<p><strong>Состав заказа:</strong> </p>*/}
       {expanded && (

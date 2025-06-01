@@ -14,7 +14,7 @@ export default function App() {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/order" element={<MakeOrderPage />} />
         <Route path="/info" element={<InfoPage />} />
-        <Route path="/order/single" element={<SingleOrderPage />} />
+        <Route path="/order/:orderId" element={<SingleOrderPage />} />
       </Routes>
     </Router>
   );
